@@ -3242,11 +3242,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\cxclx\\OneDrive\\Desktop\\azure\\systrack\\systrack-api\\systrack-api.csproj",
+      "projectUniqueName": "C:\\Users\\cxclx\\OneDrive\\Desktop\\azure\\systrack-api\\systrack-api.csproj",
       "projectName": "systrack-api",
-      "projectPath": "C:\\Users\\cxclx\\OneDrive\\Desktop\\azure\\systrack\\systrack-api\\systrack-api.csproj",
+      "projectPath": "C:\\Users\\cxclx\\OneDrive\\Desktop\\azure\\systrack-api\\systrack-api.csproj",
       "packagesPath": "C:\\Users\\cxclx\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\cxclx\\OneDrive\\Desktop\\azure\\systrack\\systrack-api\\obj\\",
+      "outputPath": "C:\\Users\\cxclx\\OneDrive\\Desktop\\azure\\systrack-api\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\cxclx\\AppData\\Roaming\\NuGet\\NuGet.Config",
