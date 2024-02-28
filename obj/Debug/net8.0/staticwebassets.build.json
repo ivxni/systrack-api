@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "d8bmzV6o6j4gvxFd9MNfoBUzN5KtnEPvZ9B0tYSLLXw=",
+  "Source": "systrack-api",
+  "BasePath": "_content/systrack-api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
