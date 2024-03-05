@@ -50,6 +50,8 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseForwardedHeaders();
+
 app.UseCors("AllowSpecificOrigin");
 app.UseHttpsRedirection();
 
