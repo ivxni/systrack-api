@@ -13,12 +13,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigin", builder =>
-    {
-        builder.WithOrigins("https://witty-grass-0ea828d03.4.azurestaticapps.net")
-               .AllowAnyHeader()
-               .AllowAnyMethod();
-    });
+    options.AddDefaultPolicy(
+        builder =>
+        {
+            builder.WithOrigins("https://witty-grass-0ea828d03.4.azurestaticapps.net")
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
 });
 
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -26,6 +27,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
 });
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -39,13 +41,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.UseCors("AllowSpecificOrigin");
+app.UseCors();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
