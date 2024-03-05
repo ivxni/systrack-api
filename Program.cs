@@ -13,9 +13,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", builder =>
+    options.AddPolicy("AllowSpecificOrigin", builder =>
     {
-        builder.AllowAnyOrigin()
+        builder.WithOrigins("https://witty-grass-0ea828d03.4.azurestaticapps.net")
                .AllowAnyHeader()
                .AllowAnyMethod();
     });
@@ -44,8 +44,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-
-app.UseCors("AllowAll");
 
 app.UseCors("AllowSpecificOrigin");
 app.UseHttpsRedirection();
