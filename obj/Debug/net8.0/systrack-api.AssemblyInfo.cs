@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("systrack-api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2b2ad11cc6e12a04e73211d1c47fbd0bcb10f73f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a0eed4acae709f64c3ab8fb54b9ff5026ecce71f")]
 [assembly: System.Reflection.AssemblyProductAttribute("systrack-api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("systrack-api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

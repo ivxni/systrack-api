@@ -57,7 +57,7 @@ namespace systrack_api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("systrack_api.Models.User", b =>
@@ -79,7 +79,7 @@ namespace systrack_api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Accounts");
+                    b.ToTable("Accounts", (string)null);
                 });
 
             modelBuilder.Entity("systrack_api.Models.Customer", b =>

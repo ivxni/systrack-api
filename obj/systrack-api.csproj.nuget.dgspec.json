@@ -1,25 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "/Users/loony/Desktop/systrack-api/systrack-api.csproj": {}
+    "C:\\Users\\cxclx\\OneDrive\\Desktop\\azure\\systrack-api\\systrack-api.csproj": {}
   },
   "projects": {
-    "/Users/loony/Desktop/systrack-api/systrack-api.csproj": {
+    "C:\\Users\\cxclx\\OneDrive\\Desktop\\azure\\systrack-api\\systrack-api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/loony/Desktop/systrack-api/systrack-api.csproj",
+        "projectUniqueName": "C:\\Users\\cxclx\\OneDrive\\Desktop\\azure\\systrack-api\\systrack-api.csproj",
         "projectName": "systrack-api",
-        "projectPath": "/Users/loony/Desktop/systrack-api/systrack-api.csproj",
-        "packagesPath": "/Users/loony/.nuget/packages/",
-        "outputPath": "/Users/loony/Desktop/systrack-api/obj/",
+        "projectPath": "C:\\Users\\cxclx\\OneDrive\\Desktop\\azure\\systrack-api\\systrack-api.csproj",
+        "packagesPath": "C:\\Users\\cxclx\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\cxclx\\OneDrive\\Desktop\\azure\\systrack-api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/loony/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\cxclx\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -100,7 +102,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

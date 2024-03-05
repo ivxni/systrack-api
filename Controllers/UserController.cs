@@ -21,6 +21,7 @@ namespace systrack_api.Controllers
         {
             _context = context;
         }
+        private readonly ILogger<UserController> _logger;
 
         // GET api/user
         [HttpGet]
@@ -36,9 +37,9 @@ namespace systrack_api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-
             var user = await _context.Accounts
                                      .Include(u => u.Customer)
+                                     .Include(u => u.Orders)
                                      .FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null)
@@ -48,6 +49,7 @@ namespace systrack_api.Controllers
 
             return user;
         }
+
 
         // PUT api/user/{id}
         [HttpPut("{id}")]
@@ -244,6 +246,264 @@ namespace systrack_api.Controllers
             return Ok(customerData);
         }
 
+        [Authorize]
+        [HttpPut("personal/{userId}")]
+        public async Task<IActionResult> UpdatePersonalData(int userId, [FromBody] Customer customerData)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Unauthorized("Benutzer ist nicht autorisiert.");
+            }
+
+            var user = await _context.Accounts.FindAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User nicht gefunden.");
+            }
+
+            var existingCustomer = await _context.Customers.FirstOrDefaultAsync(c => c.UserId == userId);
+            if (existingCustomer != null)
+            {
+                existingCustomer.FirstName = customerData.FirstName;
+                existingCustomer.LastName = customerData.LastName;
+                existingCustomer.Dob = customerData.Dob;
+                _context.Customers.Update(existingCustomer);
+            }
+            else
+            {
+                customerData.UserId = userId;
+                _context.Customers.Add(customerData);
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok("Persönliche Daten erfolgreich aktualisiert.");
+        }
+
+        [Authorize]
+        [HttpPut("address/{userId}")]
+        public async Task<IActionResult> UpdateAddressData(int userId, [FromBody] Customer addressData)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Unauthorized("Benutzer ist nicht autorisiert.");
+            }
+
+            var user = await _context.Accounts.FindAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User nicht gefunden.");
+            }
+
+            var existingCustomer = await _context.Customers.FirstOrDefaultAsync(c => c.UserId == userId);
+            if (existingCustomer != null)
+            {
+                existingCustomer.Country = addressData.Country;
+                existingCustomer.City = addressData.City;
+                existingCustomer.Zip = addressData.Zip;
+                existingCustomer.Street = addressData.Street;
+                existingCustomer.StreetNo = addressData.StreetNo;
+                _context.Customers.Update(existingCustomer);
+            }
+            else
+            {
+                var newCustomer = new Customer
+                {
+                    UserId = userId,
+                    Country = addressData.Country,
+                    City = addressData.City,
+                    Zip = addressData.Zip,
+                    Street = addressData.Street,
+                    StreetNo = addressData.StreetNo
+                };
+                _context.Customers.Add(newCustomer);
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok("Adressdaten erfolgreich aktualisiert.");
+        }
+
+        [Authorize]
+        [HttpGet("{userId}/orders")]
+        public async Task<ActionResult<IEnumerable<Order>>> GetUserOrders(int userId)
+        {
+
+            if (!User.Identity.IsAuthenticated || User.FindFirst(ClaimTypes.NameIdentifier)?.Value != userId.ToString())
+            {
+                return Unauthorized("Nicht autorisiert oder ungültige Benutzer-ID.");
+            }
+
+
+            var orders = await _context.Orders
+                                        .Where(o => o.UserId == userId)
+                                        .ToListAsync();
+
+
+            if (!orders.Any())
+            {
+                return NotFound("Keine Bestellungen für diesen Benutzer gefunden.");
+            }
+
+            return Ok(orders);
+        }
+
+        [Authorize]
+        [HttpGet("{userId}/computers")]
+        public async Task<ActionResult<IEnumerable<Computer>>> GetUserComputers(int userId)
+        {
+
+            if (!User.Identity.IsAuthenticated || User.FindFirst(ClaimTypes.NameIdentifier)?.Value != userId.ToString())
+            {
+                return Unauthorized("Nicht autorisiert oder ungültige Benutzer-ID.");
+            }
+
+
+            var computers = await _context.Computers
+                                        .Where(o => o.UserId == userId)
+                                        .ToListAsync();
+
+
+            if (!computers.Any())
+            {
+                return NotFound("No Computer found.");
+            }
+
+            return Ok(computers);
+        }
+        [HttpGet("allcomputers")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<object>>> GetAllComputers()
+        {
+            var computersWithUsers = await _context.Computers
+                .Include(o => o.User)
+                .Select(computer => new
+                {
+                    computer.ComputerId,
+                    computer.ComputerName,
+                    computer.Ram,
+                    computer.Cpu,
+                    computer.Mac,
+                    User = new
+                    {
+                        computer.User.Id,
+                        computer.User.Email
+                    }
+                })
+                .ToListAsync();
+
+            return Ok(computersWithUsers);
+        }
+
+        [HttpGet("allorders")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<object>>> GetAllOrders()
+        {
+            var ordersWithUsers = await _context.Orders
+                .Include(o => o.User)
+                .Select(order => new
+                {
+                    order.OrderId,
+                    order.OrderName,
+                    order.OrderDate,
+                    order.PurchaseType,
+                    order.CashPurchasePrice,
+                    order.MonthlyRate,
+                    order.Term,
+                    order.FinalPrice,
+                    User = new
+                    {
+                        order.User.Id,
+                        order.User.Email
+                    }
+                })
+                .ToListAsync();
+
+            return Ok(ordersWithUsers);
+        }
+        [HttpGet("orders/{id}")]
+        [Authorize]
+        public async Task<ActionResult<Order>> GetOrder(int id)
+        {
+            var order = await _context.Orders
+                .Include(o => o.User)
+                .FirstOrDefaultAsync(o => o.OrderId == id);
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return order;
+        }
+
+        [HttpPost("orders")]
+        [Authorize]
+        public async Task<IActionResult> CreateOrder([FromBody] Order order)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!Enum.TryParse(order.PurchaseType.ToString(), out PurchaseType purchaseType))
+            {
+                ModelState.AddModelError(nameof(order.PurchaseType), "Ungültiger Wert für PurchaseType.");
+                return BadRequest(ModelState);
+            }
+
+            order.PurchaseType = purchaseType;
+
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetOrder), new { id = order.OrderId }, order);
+        }
+
+        [HttpPut("orders/{id}")]
+        [Authorize]
+        public async Task<IActionResult> UpdateOrder(int id, [FromBody] Order orderUpdate)
+        {
+            if (id != orderUpdate.OrderId)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(orderUpdate).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Orders.Any(o => o.OrderId == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+        [HttpDelete("orders/{id}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteOrder(int id)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            _context.Orders.Remove(order);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
         private static string GenerateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -262,6 +522,85 @@ namespace systrack_api.Controllers
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+
+        // POST api/computers
+        [HttpPost("computers")]
+        [Authorize]
+        public async Task<IActionResult> CreateComputer([FromBody] Computer computer)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _context.Computers.Add(computer);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetComputer), new { id = computer.ComputerId }, computer);
+        }
+
+        // PUT api/computers/{id}
+        [HttpPut("computers/{id}")]
+        [Authorize]
+        public async Task<IActionResult> UpdateComputer(int id, [FromBody] Computer computerUpdate)
+        {
+            if (id != computerUpdate.ComputerId)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(computerUpdate).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Computers.Any(c => c.ComputerId == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // DELETE api/computers/{id}
+        [HttpDelete("computers/{id}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteComputer(int id)
+        {
+            var computer = await _context.Computers.FindAsync(id);
+            if (computer == null)
+            {
+                return NotFound();
+            }
+
+            _context.Computers.Remove(computer);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        // GET api/computers/{id}
+        [HttpGet("computers/{id}")]
+        [Authorize]
+        public async Task<ActionResult<Computer>> GetComputer(int id)
+        {
+            var computer = await _context.Computers.FindAsync(id);
+
+            if (computer == null)
+            {
+                return NotFound();
+            }
+
+            return computer;
         }
 
         private static string HashPassword(string? password)

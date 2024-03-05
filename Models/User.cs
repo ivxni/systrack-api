@@ -16,5 +16,6 @@ namespace systrack_api.Models
 
         public Role Role { get; set; } = Role.Customer;
         public Customer? Customer { get; set; }
+        public List<Order> Orders { get; set; } = new List<Order>();
     }
 }
