@@ -4,7 +4,6 @@ using Microsoft.IdentityModel.Tokens;
 using systrack_api.Converters;
 using System.Text;
 using SystrackApi.Data;
-using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,11 +13,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigin", builderPolicy =>
+    options.AddPolicy("AllowSpecificOrigin", builder =>
     {
-        builderPolicy.WithOrigins("https://witty-grass-0ea828d03.4.azurestaticapps.net")
-                     .AllowAnyHeader()
-                     .AllowAnyMethod();
+        builder.WithOrigins("https://witty-grass-0ea828d03.4.azurestaticapps.net")
+               .AllowAnyHeader()
+               .AllowAnyMethod();
     });
 });
 
@@ -45,21 +44,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new OpenApiInfo 
-    { 
-        Title = "Systrack API", 
-        Version = "v1",
-        Description = "API",
-        Contact = new OpenApiContact
-        {
-            Name = "sysTrack",
-            Email = "contact@systrack.com",
-            Url = new Uri("https://witty-grass-0ea828d03.4.azurestaticapps.net"),
-        }
-    });
-});
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -74,11 +61,7 @@ app.UseAuthorization();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Systrack API V1");
-        options.RoutePrefix = string.Empty;
-    });
+    app.UseSwaggerUI();
 }
 
 app.MapControllers();
